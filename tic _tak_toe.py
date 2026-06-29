@@ -1,37 +1,33 @@
-def print_board(board):
-    print("\n")
-    print(f" {board[0]} | {board[1]} | {board[2]} ")
+import random
+
+board = [" "] * 9
+
+def print_board():
+    print()
+    print(f" {board[0]} | {board[1]} | {board[2]}")
     print("---+---+---")
-    print(f" {board[3]} | {board[4]} | {board[5]} ")
+    print(f" {board[3]} | {board[4]} | {board[5]}")
     print("---+---+---")
-    print(f" {board[6]} | {board[7]} | {board[8]} ")
+    print(f" {board[6]} | {board[7]} | {board[8]}")
     print()
 
-
-def check_winner(board, player):
+def check_winner(player):
     wins = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
+        [0,1,2], [3,4,5], [6,7,8],
+        [0,3,6], [1,4,7], [2,5,8],
+        [0,4,8], [2,4,6]
     ]
-
     for combo in wins:
         if all(board[i] == player for i in combo):
             return True
     return False
 
-
-def is_draw(board):
+def board_full():
     return " " not in board
 
-
-def main():
-    board = [" "] * 9
-    player = "X"
-
-    print("=== TIC TAC TOE ===")
-    print("Board positions:")
-    print("""
+print("Welcome to Tic-Tac-Toe!")
+print("You are X")
+print("""
  1 | 2 | 3
 ---+---+---
  4 | 5 | 6
@@ -39,37 +35,49 @@ def main():
  7 | 8 | 9
 """)
 
-    while True:
-        print_board(board)
+while True:
+    # Player move
+    print_board()
 
-        try:
-            move = int(input(f"Player {player}, enter position (1-9): ")) - 1
+    try:
+        move = int(input("Enter your move (1-9): ")) - 1
 
-            if move not in range(9):
-                print("Invalid position!")
-                continue
+        if move < 0 or move > 8:
+            print("Invalid position!")
+            continue
 
-            if board[move] != " ":
-                print("Position already occupied!")
-                continue
+        if board[move] != " ":
+            print("That position is already taken!")
+            continue
 
-            board[move] = player
+        board[move] = "X"
 
-            if check_winner(board, player):
-                print_board(board)
-                print(f"🎉 Player {player} wins!")
-                break
+        if check_winner("X"):
+            print_board()
+            print("🎉 You win!")
+            break
 
-            if is_draw(board):
-                print_board(board)
-                print("🤝 It's a draw!")
-                break
+        if board_full():
+            print_board()
+            print("It's a draw!")
+            break
 
-            player = "O" if player == "X" else "X"
+        # AI move
+        available = [i for i in range(9) if board[i] == " "]
+        ai_move = random.choice(available)
+        board[ai_move] = "O"
 
-        except ValueError:
-            print("Please enter a number between 1 and 9.")
+        print(f"AI chose position {ai_move + 1}")
 
+        if check_winner("O"):
+            print_board()
+            print("🤖 AI wins!")
+            break
 
-if __name__ == "__main__":
-    main()
+        if board_full():
+            print_board()
+            print("It's a draw!")
+            break
+
+    except ValueError:
+        print("Please enter a valid number.")
